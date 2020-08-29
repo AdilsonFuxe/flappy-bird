@@ -3,7 +3,7 @@ somHit.src = './efeitos/hit.wav';
 
 const sprites = new Image();
 sprites.src = './sprites.png';
-
+let frame = 0;
 
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
@@ -33,10 +33,29 @@ function createFlappBird(){
             flappBird.velocity = flappBird.velocity + flappBird.gravity;
             flappBird.y = flappBird.y + flappBird.velocity;
         },
+        moviments: [
+            { spriteX: 0, spriteY: 0}, //up
+            { spriteX: 0, spriteY: 26}, //middle
+            { spriteX: 0, spriteY: 52} // down
+        ],
+        frameActual: 0,
+        updateFrame() {
+            const frameInterval = 11;
+            const endInterval = frame % frameInterval === 0;
+         
+            if(endInterval){
+                const incrementBase = 1;
+                const increment = incrementBase + flappBird.frameActual;
+                const repeatBase = flappBird.moviments.length;
+                flappBird.frameActual = increment % repeatBase;
+            }
+        },
         draw() {
+            flappBird.updateFrame();
+            const { spriteX, spriteY } = flappBird.moviments[flappBird.frameActual];
             context.drawImage(
                 sprites,
-                flappBird.spriteX, flappBird.spriteY,
+                spriteX, spriteY,
                 flappBird.width, flappBird.height,
                 flappBird.x, flappBird.y,
                 flappBird.width, flappBird.height
@@ -190,6 +209,8 @@ function loop() {
     activeScreen.update();
 
     requestAnimationFrame(loop);
+
+    frame++;
 }
 
 window.addEventListener('click', ()=>{
