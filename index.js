@@ -1,3 +1,5 @@
+const somHit = new Audio();
+somHit.src = './efeitos/hit.wav';
 
 const sprites = new Image();
 sprites.src = './sprites.png';
@@ -6,41 +8,44 @@ sprites.src = './sprites.png';
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
 
-
-const flappBird = {
-    spriteX: 0,
-    spriteY: 0,
-    width: 33,
-    height: 24, 
-    x: 10,
-    y: 50,
-    gravity:0.25,
-    velocity: 0,
-    skip: 4.6,
-    jump() {
-        flappBird.velocity = - flappBird.skip;
-    },
-    update(){
-
-        if(madeCollision(flappBird, floor)){
-            console.log('fez colisao')
-            changeScreen(Screens.START);
-            return;
+function createFlappBird(){
+    const flappBird = {
+        spriteX: 0,
+        spriteY: 0,
+        width: 33,
+        height: 24, 
+        x: 10,
+        y: 50,
+        gravity:0.25,
+        velocity: 0,
+        skip: 4.6,
+        jump() {
+            flappBird.velocity = - flappBird.skip;
+        },
+        update(){
+    
+            if(madeCollision(flappBird, floor)){
+                somHit.play();
+                setTimeout(()=>{changeScreen(Screens.START);},500);
+                return;
+            }
+    
+            flappBird.velocity = flappBird.velocity + flappBird.gravity;
+            flappBird.y = flappBird.y + flappBird.velocity;
+        },
+        draw() {
+            context.drawImage(
+                sprites,
+                flappBird.spriteX, flappBird.spriteY,
+                flappBird.width, flappBird.height,
+                flappBird.x, flappBird.y,
+                flappBird.width, flappBird.height
+            );
         }
-
-        flappBird.velocity = flappBird.velocity + flappBird.gravity;
-        flappBird.y = flappBird.y + flappBird.velocity;
-    },
-    draw() {
-        context.drawImage(
-            sprites,
-            flappBird.spriteX, flappBird.spriteY,
-            flappBird.width, flappBird.height,
-            flappBird.x, flappBird.y,
-            flappBird.width, flappBird.height
-        );
     }
+    return flappBird;
 }
+
 
 
 
@@ -124,19 +129,26 @@ const getReadyMessage = {
 }
 
 //telas
-
+const global = {};
 let activeScreen = {};
 
 function changeScreen (newScreen){
     activeScreen = newScreen;
+
+    if(activeScreen.init){
+        activeScreen.init();
+    }
 }
 
 const Screens = {
     START: {
+        init(){
+            global.flappBird = createFlappBird();
+        },
         draw() {
             background.draw();
             floor.draw();
-            flappBird.draw();
+            global.flappBird.draw();
             getReadyMessage.draw();
         },
         click(){
@@ -152,13 +164,13 @@ Screens.GAME = {
     draw() {
         background.draw();
         floor.draw();
-        flappBird.draw();
+        global.flappBird.draw();
     },
     click() {
-        flappBird.jump();
+        global.flappBird.jump();
     },
     update() {
-        flappBird.update();
+        global.flappBird.update();
     }
 }
 
