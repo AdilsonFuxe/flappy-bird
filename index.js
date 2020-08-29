@@ -1,9 +1,11 @@
+
 const sprites = new Image();
 sprites.src = './sprites.png';
 
 
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
+
 
 const flappBird = {
     spriteX: 0,
@@ -19,6 +21,13 @@ const flappBird = {
         flappBird.velocity = - flappBird.skip;
     },
     update(){
+
+        if(madeCollision(flappBird, floor)){
+            console.log('fez colisao')
+            changeScreen(Screens.START);
+            return;
+        }
+
         flappBird.velocity = flappBird.velocity + flappBird.gravity;
         flappBird.y = flappBird.y + flappBird.velocity;
     },
@@ -32,6 +41,8 @@ const flappBird = {
         );
     }
 }
+
+
 
 //chao
 const floor = {
@@ -57,6 +68,13 @@ const floor = {
             floor.width, floor.height
         );
     }
+}
+
+function madeCollision(flappBird, floor){
+    const flappBirdY = flappBird.y + flappBird.height;
+    const floorY = floor.y;
+
+    return flappBirdY >= floorY;
 }
 
 //plano de fundo
