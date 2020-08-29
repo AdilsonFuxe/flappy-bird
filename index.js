@@ -12,6 +12,12 @@ const flappBird = {
     height: 24, 
     x: 10,
     y: 50,
+    gravity:0.25,
+    velocity: 0,
+    update(){
+        flappBird.velocity = flappBird.velocity + flappBird.gravity;
+        flappBird.y = flappBird.y + flappBird.velocity;
+    },
     draw() {
         context.drawImage(
             sprites,
@@ -77,14 +83,74 @@ const background = {
     }
 }
 
+const getReadyMessage = {
+    spriteX: 134,
+    spriteY: 0,
+    width: 174,
+    height: 152, 
+    x: (canvas.width / 2) - (174 / 2),
+    y: 50,
+    draw() {
+        context.drawImage(
+            sprites,
+            getReadyMessage.spriteX, getReadyMessage.spriteY,
+            getReadyMessage.width, getReadyMessage.height,
+            getReadyMessage.x, getReadyMessage.y,
+            getReadyMessage.width, getReadyMessage.height
+        );
+    }
+}
+
+//telas
+
+let activeScreen = {};
+
+function changeScreen (newScreen){
+    activeScreen = newScreen;
+}
+
+const Screens = {
+    START: {
+        draw() {
+            background.draw();
+            floor.draw();
+            flappBird.draw();
+            getReadyMessage.draw();
+        },
+        click(){
+
+        },
+        update() {
+
+        }
+    }
+}
+
+Screens.GAME = {
+    draw() {
+        background.draw();
+        floor.draw();
+        flappBird.draw();
+    },
+    update() {
+        flappBird.update();
+    }
+}
 
 function loop() {
-    background.draw();
-    floor.draw();
-    flappBird.draw();
+   
+    activeScreen.draw();
+    activeScreen.update();
 
-    flappBird.y = flappBird.y + 1;
     requestAnimationFrame(loop);
 }
+
+window.addEventListener('click', ()=>{
+    if(activeScreen.click){
+        changeScreen(Screens.GAME);
+    }
+});
+
+changeScreen(Screens.START);
 
 loop();
