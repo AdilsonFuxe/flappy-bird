@@ -14,6 +14,10 @@ const flappBird = {
     y: 50,
     gravity:0.25,
     velocity: 0,
+    skip: 4.6,
+    jump() {
+        flappBird.velocity = - flappBird.skip;
+    },
     update(){
         flappBird.velocity = flappBird.velocity + flappBird.gravity;
         flappBird.y = flappBird.y + flappBird.velocity;
@@ -118,7 +122,7 @@ const Screens = {
             getReadyMessage.draw();
         },
         click(){
-
+            changeScreen(Screens.GAME);
         },
         update() {
 
@@ -131,6 +135,9 @@ Screens.GAME = {
         background.draw();
         floor.draw();
         flappBird.draw();
+    },
+    click() {
+        flappBird.jump();
     },
     update() {
         flappBird.update();
@@ -147,7 +154,7 @@ function loop() {
 
 window.addEventListener('click', ()=>{
     if(activeScreen.click){
-        changeScreen(Screens.GAME);
+        activeScreen.click();
     }
 });
 
