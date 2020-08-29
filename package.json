@@ -1,0 +1,8 @@
+{
+  "name": "flappybird",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/AdilsonFuxe/flappy-bird.git",
+  "author": "adilsonfuxe <adilsonfuxe.fuxe@gmail.com>",
+  "license": "MIT"
+}

@@ -24,7 +24,7 @@ function createFlappBird(){
         },
         update(){
     
-            if(madeCollision(flappBird, floor)){
+            if(madeCollision(flappBird,  global.floor)){
                 somHit.play();
                 setTimeout(()=>{changeScreen(Screens.START);},500);
                 return;
@@ -46,34 +46,43 @@ function createFlappBird(){
     return flappBird;
 }
 
-
-
-
 //chao
-const floor = {
-    spriteX: 0,
-    spriteY: 610,
-    width: 224,
-    height: 112, 
-    x: 0,
-    y: canvas.height - 112,
-    draw() {
-        context.drawImage(
-            sprites,
-            floor.spriteX, floor.spriteY,
-            floor.width, floor.height,
-            floor.x, floor.y,
-            floor.width, floor.height
-        );
-        context.drawImage(
-            sprites,
-            floor.spriteX, floor.spriteY,
-            floor.width, floor.height,
-            (floor.x + floor.width), floor.y,
-            floor.width, floor.height
-        );
+function createFloor(){
+    const floor = {
+        spriteX: 0,
+        spriteY: 610,
+        width: 224,
+        height: 112, 
+        x: 0,
+        y: canvas.height - 112,
+        update(){
+           const floorMovement = 1;
+           const repeatIn = floor.width / 2;
+           const moviment = floor.x - floorMovement;
+           floor.x = moviment % repeatIn;
+        },
+        draw() {
+            context.drawImage(
+                sprites,
+                floor.spriteX, floor.spriteY,
+                floor.width, floor.height,
+                floor.x, floor.y,
+                floor.width, floor.height
+            );
+            context.drawImage(
+                sprites,
+                floor.spriteX, floor.spriteY,
+                floor.width, floor.height,
+                (floor.x + floor.width), floor.y,
+                floor.width, floor.height
+            );
+        }
     }
+    return floor;
 }
+
+
+
 
 function madeCollision(flappBird, floor){
     const flappBirdY = flappBird.y + flappBird.height;
@@ -144,10 +153,11 @@ const Screens = {
     START: {
         init(){
             global.flappBird = createFlappBird();
+            global.floor = createFloor();
         },
         draw() {
             background.draw();
-            floor.draw();
+            global.floor.draw();
             global.flappBird.draw();
             getReadyMessage.draw();
         },
@@ -155,7 +165,7 @@ const Screens = {
             changeScreen(Screens.GAME);
         },
         update() {
-
+            global.floor.update();
         }
     }
 }
@@ -163,7 +173,7 @@ const Screens = {
 Screens.GAME = {
     draw() {
         background.draw();
-        floor.draw();
+        global.floor.draw();
         global.flappBird.draw();
     },
     click() {
