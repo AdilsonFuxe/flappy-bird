@@ -173,31 +173,58 @@ function createPipes(){
        
         draw() {
             const spaceBetweenPipes = 90;
-            const yRandom = -150;
-            const pipeSkyX = 220;
-            const pipeSkyY = yRandom;
+           
 
-            // cano no ceu
-            context.drawImage(
-                sprites,
-                pipes.sky.spriteX, pipes.sky.spriteY,
-                pipes.width, pipes.height,
-                pipeSkyX, pipeSkyY,
-                pipes.width, pipes.height
-            );
+            pipes.pars.forEach(function(par){
+                const yRandom = par.y;
+                const pipeSkyX = par.x;
+                const pipeSkyY = yRandom;
+                // cano no ceu
+                context.drawImage(
+                    sprites,
+                    pipes.sky.spriteX, pipes.sky.spriteY,
+                    pipes.width, pipes.height,
+                    pipeSkyX, pipeSkyY,
+                    pipes.width, pipes.height
+                );
+
+                
+                const pipeFlooyX = par.x;
+                const pipeFlooyY = pipes.height + spaceBetweenPipes + yRandom;
+
+                // cano no chao
+                context.drawImage(
+                    sprites,
+                    pipes.floor.spriteX, pipes.floor.spriteY,
+                    pipes.width, pipes.height,
+                    pipeFlooyX, pipeFlooyY,
+                    pipes.width, pipes.height
+                );
+            });
 
             
-            const pipeFlooyX = 220;
-            const pipeFlooyY = pipes.height + spaceBetweenPipes + yRandom;
+        },
+        pars: [],
+        update() {
+            const passed100Frames = frame % 100 === 0;
 
-            // cano no chao
-            context.drawImage(
-                sprites,
-                pipes.floor.spriteX, pipes.floor.spriteY,
-                pipes.width, pipes.height,
-                pipeFlooyX, pipeFlooyY,
-                pipes.width, pipes.height
-            );
+            if(passed100Frames) {
+                //console.log('Passou 100 frames');
+
+                pipes.pars.push( { 
+                    x: canvas.width, 
+                    y: -150 * (Math.random() + 1)
+                })
+
+                
+            }
+            pipes.pars.forEach(function(par){
+                par.x = par.x - 2;
+
+                if( par.x + pipes.width <= 0) {
+                    pipes.pars.shift();
+                }
+            })
         }
     }
 
@@ -225,16 +252,17 @@ const Screens = {
         },
         draw() {
             background.draw();
+            global.pipe.draw();
             global.floor.draw();
             global.flappBird.draw();
             //getReadyMessage.draw();
-            global.pipe.draw();
         },
         click(){
             changeScreen(Screens.GAME);
         },
         update() {
             global.floor.update();
+            global.pipe.update();
         }
     }
 }
