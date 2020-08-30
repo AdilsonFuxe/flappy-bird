@@ -100,9 +100,6 @@ function createFloor(){
     return floor;
 }
 
-
-
-
 function madeCollision(flappBird, floor){
     const flappBirdY = flappBird.y + flappBird.height;
     const floorY = floor.y;
@@ -188,7 +185,6 @@ function createPipes(){
                     pipes.width, pipes.height
                 );
 
-                
                 const pipeFlooyX = par.x;
                 const pipeFlooyY = pipes.height + spaceBetweenPipes + yRandom;
 
@@ -200,26 +196,51 @@ function createPipes(){
                     pipeFlooyX, pipeFlooyY,
                     pipes.width, pipes.height
                 );
-            });
 
-            
+                par.pipeSky = {
+                    x: pipeSkyX,
+                    y: pipes.height + pipeSkyY
+                }
+
+                par.pipeFloor = {
+                    x: pipeFlooyX,
+                    y: pipeFlooyY
+                }
+            });
         },
         pars: [],
+        madeCollision(par){
+            const flappHead = global.flappBird.y;
+            const flappBirdBotton = global.flappBird.y + global.flappBird.height;
+
+            if(global.flappBird.x >= par.x) {
+                if(flappHead  <= par.pipeSky.y) {
+                    return true;
+                }
+                
+                if( flappBirdBotton >= par.pipeFloor.y) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
         update() {
             const passed100Frames = frame % 100 === 0;
 
             if(passed100Frames) {
-                //console.log('Passou 100 frames');
-
                 pipes.pars.push( { 
                     x: canvas.width, 
                     y: -150 * (Math.random() + 1)
                 })
-
-                
             }
+
             pipes.pars.forEach(function(par){
                 par.x = par.x - 2;
+
+                if(pipes.madeCollision(par)) {
+                    console.log('Voce perdeu');
+                }
 
                 if( par.x + pipes.width <= 0) {
                     pipes.pars.shift();
@@ -252,10 +273,9 @@ const Screens = {
         },
         draw() {
             background.draw();
-            global.pipe.draw();
             global.floor.draw();
             global.flappBird.draw();
-            //getReadyMessage.draw();
+            getReadyMessage.draw();
         },
         click(){
             changeScreen(Screens.GAME);
@@ -270,6 +290,7 @@ const Screens = {
 Screens.GAME = {
     draw() {
         background.draw();
+        global.pipe.draw();
         global.floor.draw();
         global.flappBird.draw();
     },
@@ -278,6 +299,8 @@ Screens.GAME = {
     },
     update() {
         global.flappBird.update();
+        global.floor.update();
+        global.pipe.update();
     }
 }
 
