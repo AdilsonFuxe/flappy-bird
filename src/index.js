@@ -1,8 +1,8 @@
 const somHit = new Audio();
-somHit.src = './efeitos/hit.wav';
+somHit.src = '../efeitos/hit.wav';
 
 const sprites = new Image();
-sprites.src = './sprites.png';
+sprites.src = './img/sprites.png';
 let frame = 0;
 
 const canvas = document.querySelector('canvas');
@@ -23,13 +23,11 @@ function createFlappBird(){
             flappBird.velocity = - flappBird.skip;
         },
         update(){
-    
             if(madeCollision(flappBird,  global.floor)){
                 somHit.play();
                 setTimeout(()=>{changeScreen(Screens.START);},500);
                 return;
-            }
-    
+            }    
             flappBird.velocity = flappBird.velocity + flappBird.gravity;
             flappBird.y = flappBird.y + flappBird.velocity;
         },
@@ -239,7 +237,9 @@ function createPipes(){
                 par.x = par.x - 2;
 
                 if(pipes.madeCollision(par)) {
-                    console.log('Voce perdeu');
+                    somHit.play();
+                    setTimeout(()=>{changeScreen(Screens.START);},500);
+                    return;
                 }
 
                 if( par.x + pipes.width <= 0) {
